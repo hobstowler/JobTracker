@@ -26,7 +26,12 @@ class JobScrapeRequest(BaseModel):
 
 @app.post('/job/scrape')
 async def scrape_for_jobs(job_scrape: JobScrapeRequest):
-    pass
+    job_controller = JobController()
+    job_controller.scrape(job_scrape.user_uuid, job_scrape.source_name, job_scrape.search_uuid)
+
+    return {
+        'statusCode': 200
+    }
 
 
 class JobApplicationRequest(BaseModel):
@@ -47,14 +52,20 @@ async def apply_to_jobs(job_app: JobApplicationRequest):
 
 
 @app.get('/job')
-def get_jobs(q: Union[str, None] = None):
+def get_jobs(uuid: str, q: Union[str, None] = None):
     job_controller = JobController()
 
     if q is None:
-        jobs = job_controller.get_jobs()
+        jobs = job_controller.get_jobs(user_uuid=uuid)
     else:
         job_ids = q.split(',')
-        jobs = job_controller.get_jobs(job_ids)
+        jobs = job_controller.get_jobs(uuid, job_ids)
+
+    return {
+        'statusCode': 200,
+        'content-type': 'application/json',
+        'jobs': jobs
+    }
 
 
 @app.get('/company')

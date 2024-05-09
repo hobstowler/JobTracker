@@ -3,7 +3,8 @@ from .base import BaseService
 from server.services.scrapers import IndeedScrapingService
 
 
-class JobScrapingService(BaseService):
+class JobService(BaseService):
+
     @staticmethod
     def scrape(user: User, source: Source, search: Search):
         if source.name == 'indeed':

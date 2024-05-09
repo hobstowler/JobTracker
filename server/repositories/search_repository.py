@@ -45,3 +45,10 @@ class SearchRepository(BaseRepository):
 
         if search_to_delete:
             session.delete(search_to_delete)
+
+
+if __name__ == '__main__':
+    repo = SearchRepository()
+    search = Search('Software Engineer', 'United States', remote=True, lookback_days=1)
+
+    repo.add(search)

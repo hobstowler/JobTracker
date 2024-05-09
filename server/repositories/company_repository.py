@@ -1,6 +1,5 @@
 from typing import List, Optional, Type
 
-from sqlalchemy import Uuid
 from sqlalchemy.orm import Session
 
 from server.models import Company
@@ -50,3 +49,7 @@ class CompanyRepository(BaseRepository):
 
         if company_to_delete:
             session.delete(company_to_delete)
+
+
+if __name__ == '__main__':
+    pass

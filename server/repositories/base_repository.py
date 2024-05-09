@@ -51,5 +51,7 @@ class BaseRepository(ABC):
         pass
 
 
-# b = BaseRepository()
-# b.create_db()
+if __name__ == '__main__':
+    pass
+    # b = BaseRepository()
+    # b.create_db()
