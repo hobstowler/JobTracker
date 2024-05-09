@@ -1,7 +1,8 @@
-
+import uuid
 from typing import List
 
-from sqlalchemy import String
+import uuid as uuid
+from sqlalchemy import String, Uuid
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from server.models.base import Base
@@ -12,7 +13,7 @@ class Company(Base):
 
     __disallowed = ('id')
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    uuid: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(50))
     address: Mapped[str] = mapped_column(String(100), nullable=True)
     jobs: Mapped[List["Job"]] = relationship(back_populates='company')

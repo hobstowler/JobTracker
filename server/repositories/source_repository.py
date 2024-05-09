@@ -8,11 +8,11 @@ from server.repositories.base_repository import BaseRepository, with_session, DE
 
 class SourceRepository(BaseRepository):
     @with_session
-    def add(self, session: Session, source: Source) -> int:
+    def add(self, session: Session, source: Source) -> str:
         session.add(source)
         session.flush()
 
-        return source.id
+        return source.uuid
 
     @with_session
     def get(self, session: Session, limit=DEFAULT_LIMIT, offset: int = 0) -> list[Type[Source]]:
@@ -21,8 +21,8 @@ class SourceRepository(BaseRepository):
         return sources
 
     @with_session
-    def get_by_id(self, session: Session, source_id: int) -> Optional[Source]:
-        source = session.query(Source).where(Source.id == source_id).first()
+    def get_by_id(self, session: Session, source_uuid: str) -> Optional[Source]:
+        source = session.query(Source).where(Source.uuid == source_uuid).first()
 
         return source
 
@@ -34,13 +34,18 @@ class SourceRepository(BaseRepository):
 
     @with_session
     def update(self, session: Session, source: Source) -> None:
-        valid_attr = {k: v for (k, v) in source.__dict__.items() if k not in ['_sa_instance_state', 'id']}
+        valid_attr = {k: v for (k, v) in source.__dict__.items() if k not in ['_sa_instance_state', 'uuid']}
 
-        session.query(Source).where(Source.id == source.id).update(valid_attr)
+        session.query(Source).where(Source.uuid == source.uuid).update(valid_attr)
 
     @with_session
-    def delete(self, session: Session, source_id: int) -> None:
-        source_to_delete = session.query(Source).where(Source.id == source_id).first()
+    def delete(self, session: Session, source_uuid: str) -> None:
+        source_to_delete = session.query(Source).where(Source.uuid == source_uuid).first()
 
         if source_to_delete:
             session.delete(source_to_delete)
+
+
+# source = Source('indeed', 'https://www.indeed.com')
+# source_repo = SourceRepository()
+# source_repo.add(source)

@@ -1,5 +1,6 @@
 from typing import Optional, Type
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from server.models import Job
@@ -8,11 +9,11 @@ from server.repositories.base_repository import BaseRepository, with_session, DE
 
 class JobRepository(BaseRepository):
     @with_session
-    def add(self, session: Session, job: Job) -> int:
+    def add(self, session: Session, job: Job) -> str:
         session.add(job)
         session.flush()
 
-        return job.id
+        return job.uuid
 
     @with_session
     def get(self, session: Session, limit=DEFAULT_LIMIT, offset: int = 0) -> list[Type[Job]]:
@@ -21,20 +22,27 @@ class JobRepository(BaseRepository):
         return jobs
 
     @with_session
-    def get_by_id(self, session: Session, job_id: int) -> Optional[Job]:
-        job = session.query(Job).where(Job.id == job_id).first()
+    def get_by_id(self, session: Session, job_uuid: str) -> Optional[Job]:
+        job = session.query(Job).where(Job.uuid == job_uuid).first()
+
+        return job
+
+    @with_session
+    def get_by_url(self, session: Session, job_url: str) -> Optional[Job]:
+        job = session.query(Job).where(Job.url == job_url).first()
 
         return job
 
     @with_session
     def update(self, session: Session, job: Job) -> None:
-        valid_attr = {k: v for (k, v) in job.__dict__.items() if k not in ['_sa_instance_state', 'id', 'date_added']}
+        valid_attr = {k: v for (k, v) in job.__dict__.items() if k not in ['_sa_instance_state', 'uuid']}
+        print(valid_attr)
 
-        session.query(Job).where(Job.id == job.id).update(valid_attr)
+        session.query(Job).where(Job.uuid == job.uuid).update(valid_attr)
 
     @with_session
-    def delete(self, session: Session, job_id: int) -> None:
-        job_to_delete = session.query(Job).where(Job.id == job_id).first()
+    def delete(self, session: Session, job_uuid: str) -> None:
+        job_to_delete = session.query(Job).where(Job.uuid == job_uuid).first()
 
         if job_to_delete:
             session.delete(job_to_delete)
